@@ -1,0 +1,4 @@
+pretrained_i3d/*
+Epich_kitchens_reduced/*
+utils/__pycache__/*
+Experiment_logs/*

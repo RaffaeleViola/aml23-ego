@@ -17,7 +17,7 @@ import wandb
 # global variables among training functions
 training_iterations = 0
 modalities = None
-np.random.seed(13696641)
+np.random.seed(13696641) #NEW: we need to randomly generated the seed?
 torch.manual_seed(13696641)
 
 
@@ -41,7 +41,7 @@ def init_operations():
 def main():
     global training_iterations, modalities
     init_operations()
-    modalities = args.modality
+    modalities = args.modality #NEW: args passed throw cl, args.py file
 
     # recover valid paths, domains, classes
     # this will output the domain conversion (D1 -> 8, et cetera) and the label list
@@ -85,7 +85,8 @@ def main():
                                                  batch_size=args.batch_size, shuffle=False,
                                                  num_workers=args.dataset.workers, pin_memory=True, drop_last=False)
         train(action_classifier, train_loader, val_loader, device, num_classes)
-
+        # NEW: num_workers equal 0 means that it’s the main process that will do the data loading when needed or put a specific number with the risk of memory overhead
+        # NEW: The pin memory is set to True to the DataLoader which will automatically put the fetched data Tensors in pinned memory
     elif args.action == "validate":
         if args.resume_from is not None:
             action_classifier.load_last_model(args.resume_from)
