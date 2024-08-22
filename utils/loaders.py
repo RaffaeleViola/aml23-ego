@@ -1,5 +1,6 @@
 import glob
 from abc import ABC
+import numpy as np
 import pandas as pd
 from .epic_record import EpicVideoRecord
 import torch.utils.data as data
@@ -74,7 +75,38 @@ class EpicKitchensDataset(data.Dataset, ABC):
         # Remember that the returned array should have size              #
         #           num_clip x num_frames_per_clip                       #
         ##################################################################
-        raise NotImplementedError("You should implement _get_train_indices")
+
+        frame_indices = []
+        tot_frames = record.num_frames[modality]
+        fixed_length = tot_frames // self.num_clips
+
+        if self.dense_sampling[modality]:
+            half_clip_frames = record.num_frames[modality] // (2 * self.num_clips)
+            center_points = np.linspace(half_clip_frames, 
+                                        record.num_frames[modality] - half_clip_frames, 
+                                        self.num_clips, 
+                                        dtype=int)
+
+            for center in center_points:
+                frames = [(center + self.stride * (x - self.num_frames_per_clip[modality] // 2)) 
+                        for x in range(self.num_frames_per_clip[modality])]
+                
+                # Ensure that indices do not exceed the number of frames
+                frames = [max(0, min(f, record.num_frames[modality] - 1)) for f in frames]
+                frame_indices.extend(frames)
+        else:
+            central_points = np.random.randint(0, (tot_frames - fixed_length), self.num_clips)
+            for point in central_points:
+                clip_frames = np.linspace(
+                    point,
+                    point + fixed_length,
+                    self.num_frames_per_clip[modality],
+                    dtype=int,
+                )
+                frame_indices.extend(clip_frames)
+            frame_indices = np.array(frame_indices)
+
+        return frame_indices
 
     def _get_val_indices(self, record, modality):
         ##################################################################
@@ -85,7 +117,39 @@ class EpicKitchensDataset(data.Dataset, ABC):
         # Remember that the returned array should have size              #
         #           num_clip x num_frames_per_clip                       #
         ##################################################################
-        raise NotImplementedError("You should implement _get_val_indices")
+
+        frame_indices = []
+        tot_frames = record.num_frames[modality]
+        fixed_length = tot_frames // self.num_clips
+
+        if self.dense_sampling[modality]:
+            half_clip_frames = record.num_frames[modality] // (2 * self.num_clips)
+            center_points = np.linspace(half_clip_frames, 
+                                        record.num_frames[modality] - half_clip_frames, 
+                                        self.num_clips, 
+                                        dtype=int)
+
+            for center in center_points:
+                frames = [(center + self.stride * (x - self.num_frames_per_clip[modality] // 2)) 
+                        for x in range(self.num_frames_per_clip[modality])]
+                
+                # Ensure that indices do not exceed the number of frames
+                frames = [max(0, min(f, record.num_frames[modality] - 1)) for f in frames]
+                frame_indices.extend(frames)
+        else:
+            central_points = np.random.randint(0, (tot_frames - fixed_length), self.num_clips)
+            for point in central_points:
+                clip_frames = np.linspace(
+                    point,
+                    point + fixed_length,
+                    self.num_frames_per_clip[modality],
+                    dtype=int,
+                )
+                frame_indices.extend(clip_frames)
+            frame_indices = np.array(frame_indices)
+
+        return frame_indices
+
 
     def __getitem__(self, index):
 
