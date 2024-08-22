@@ -1,5 +1,6 @@
 import glob
 from abc import ABC
+import numpy as np
 import pandas as pd
 from .epic_record import EpicVideoRecord
 import torch.utils.data as data
@@ -75,8 +76,33 @@ class EpicKitchensDataset(data.Dataset, ABC):
         # Remember that the returned array should have size              #
         #           num_clip x num_frames_per_clip                       #
         ##################################################################
-        raise Exception()
 
+        frame_indices = []
+    
+        if self.dense_sampling:
+            half_clip_frames = record.num_frames[modality] // (2 * self.num_clips)
+            total_clip_frames = self.num_frames_per_clip[modality] * self.stride
+
+            if total_clip_frames // 2 <= half_clip_frames:
+                center_points = np.linspace(half_clip_frames, 
+                                            record.num_frames[modality] - half_clip_frames, 
+                                            self.num_clips, 
+                                            dtype=int)
+            else:
+                center_points = np.linspace(total_clip_frames // 2, 
+                                            record.num_frames[modality] - total_clip_frames // 2, 
+                                            self.num_clips, 
+                                            dtype=int)
+
+            for center in center_points:
+                frames = [(center - total_clip_frames // 2 + self.stride * x) 
+                        for x in range(self.num_frames_per_clip[modality])]
+                
+                # Ensure that indices do not exceed the number of frames
+                frames = [max(0, min(f, record.num_frames[modality] - 1)) for f in frames]
+                frame_indices.extend(frames)
+
+        return frame_indices
 
     def _get_val_indices(self, record, modality):
         ##################################################################
@@ -87,7 +113,33 @@ class EpicKitchensDataset(data.Dataset, ABC):
         # Remember that the returned array should have size              #
         #           num_clip x num_frames_per_clip                       #
         ##################################################################
-        raise Exception()
+
+        frame_indices = []
+    
+        if self.dense_sampling:
+            half_clip_frames = record.num_frames[modality] // (2 * self.num_clips)
+            total_clip_frames = self.num_frames_per_clip[modality] * self.stride
+
+            if total_clip_frames // 2 <= half_clip_frames:
+                center_points = np.linspace(half_clip_frames, 
+                                            record.num_frames[modality] - half_clip_frames, 
+                                            self.num_clips, 
+                                            dtype=int)
+            else:
+                center_points = np.linspace(total_clip_frames // 2, 
+                                            record.num_frames[modality] - total_clip_frames // 2, 
+                                            self.num_clips, 
+                                            dtype=int)
+
+            for center in center_points:
+                frames = [(center - total_clip_frames // 2 + self.stride * x) 
+                        for x in range(self.num_frames_per_clip[modality])]
+                
+                # Ensure that indices do not exceed the number of frames
+                frames = [max(0, min(f, record.num_frames[modality] - 1)) for f in frames]
+                frame_indices.extend(frames)
+            
+        return frame_indices
 
     def __getitem__(self, index):
 
