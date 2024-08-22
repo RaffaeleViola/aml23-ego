@@ -1,0 +1,11 @@
+EK_Data
+Experiment_logs
+EMG_data
+EMG_preprocessed
+colab_runner.ipynb
+saved_features
+saved_models
+TEST_RESULTS
+models/__pycache__
+utils/__pycache__
+tasks/__pycache__

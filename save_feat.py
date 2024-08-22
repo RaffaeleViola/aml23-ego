@@ -114,6 +114,7 @@ def save_feat(model, loader, device, it, num_classes):
                 for m in modalities:
                     logits[m][i_c] = output[m]
                     features[m][i_c] = feat[m]
+                    feat[m].shape
             for m in modalities:
                 logits[m] = torch.mean(logits[m], dim=0)
             for i in range(batch):
