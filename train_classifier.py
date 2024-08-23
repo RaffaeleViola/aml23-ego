@@ -147,15 +147,14 @@ def train(action_classifier, train_loader, val_loader, device, num_classes):
         source_label = source_label.to(device)
         data = {}
 
-        for clip in range(args.train.num_clips):
+        #for clip in range(args.train.num_clips):
             # in case of multi-clip training one clip per time is processed
-            for m in modalities:
-                data[m] = source_data[m][:, clip].to(device)
-
-            logits, _ = action_classifier.forward(data)
-            action_classifier.compute_loss(logits, source_label, loss_weight=1)
-            action_classifier.backward(retain_graph=False)
-            action_classifier.compute_accuracy(logits, source_label)
+        for m in modalities:
+            data[m] = source_data[m].to(device)
+        logits, _ = action_classifier.forward(data)
+        action_classifier.compute_loss(logits, source_label, loss_weight=1)
+        action_classifier.backward(retain_graph=False)
+        action_classifier.compute_accuracy(logits, source_label)
 
         # update weights and zero gradients if total_batch samples are passed
         if gradient_accumulation_step:
@@ -209,21 +208,17 @@ def validate(model, val_loader, device, it, num_classes):
                 logits[m] = torch.zeros((args.test.num_clips, batch, num_classes)).to(device)
 
             clip = {}
-            for i_c in range(args.test.num_clips):
-                for m in modalities:
-                    clip[m] = data[m][:, i_c].to(device)
-
-                output, _ = model(clip)
-                for m in modalities:
-                    logits[m][i_c] = output[m]
-
             for m in modalities:
-                logits[m] = torch.mean(logits[m], dim=0)
+                clip[m] = data[m].to(device)
+
+            output, _ = model(clip)
+            for m in modalities:
+                logits[m] = output[m]
+
 
             model.compute_accuracy(logits, label)
 
-            if (i_val + 1) % (len(val_loader) // 5) == 0:
-                logger.info("[{}/{}] top1= {:.3f}% top5 = {:.3f}%".format(i_val + 1, len(val_loader),
+            logger.info("[{}/{}] top1= {:.3f}% top5 = {:.3f}%".format(i_val + 1, len(val_loader),
                                                                           model.accuracy.avg[1], model.accuracy.avg[5]))
 
         class_accuracies = [(x / y) * 100 for x, y in zip(model.accuracy.correct, model.accuracy.total)]
