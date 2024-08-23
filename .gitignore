@@ -1,4 +1,13 @@
-pretrained_i3d/*
-Epich_kitchens_reduced/*
-utils/__pycache__/*
-Experiment_logs/*
+EK_Data
+pretrained_i3d
+Experiment_logs
+EMG_data
+Epich_kitchens_reduced
+EMG_preprocessed
+colab_runner.ipynb
+saved_features
+saved_models
+TEST_RESULTS
+models/__pycache__
+utils/__pycache__
+tasks/__pycache__
