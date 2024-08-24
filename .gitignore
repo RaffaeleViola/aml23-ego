@@ -1,6 +1,20 @@
+<<<<<<< HEAD
 ek_data
 Experiment_logs
 saved_features
 saved_models
 TEST_RESULTS
 env.yml
+=======
+EK_Data
+Experiment_logs
+EMG_data
+EMG_preprocessed
+colab_runner.ipynb
+saved_features
+saved_models
+TEST_RESULTS
+models/__pycache__
+utils/__pycache__
+tasks/__pycache__
+>>>>>>> b2f6c1292a809c6035d72ab90d5da340f9108111

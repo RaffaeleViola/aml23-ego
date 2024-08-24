@@ -78,29 +78,34 @@ class EpicKitchensDataset(data.Dataset, ABC):
         ##################################################################
 
         frame_indices = []
-    
-        if self.dense_sampling:
-            half_clip_frames = record.num_frames[modality] // (2 * self.num_clips)
-            total_clip_frames = self.num_frames_per_clip[modality] * self.stride
+        tot_frames = record.num_frames[modality]
+        fixed_length = tot_frames // self.num_clips
 
-            if total_clip_frames // 2 <= half_clip_frames:
-                center_points = np.linspace(half_clip_frames, 
-                                            record.num_frames[modality] - half_clip_frames, 
-                                            self.num_clips, 
-                                            dtype=int)
-            else:
-                center_points = np.linspace(total_clip_frames // 2, 
-                                            record.num_frames[modality] - total_clip_frames // 2, 
-                                            self.num_clips, 
-                                            dtype=int)
+        if self.dense_sampling[modality]:
+            half_clip_frames = record.num_frames[modality] // (2 * self.num_clips)
+            center_points = np.linspace(half_clip_frames, 
+                                        record.num_frames[modality] - half_clip_frames, 
+                                        self.num_clips, 
+                                        dtype=int)
 
             for center in center_points:
-                frames = [(center - total_clip_frames // 2 + self.stride * x) 
+                frames = [(center + self.stride * (x - self.num_frames_per_clip[modality] // 2)) 
                         for x in range(self.num_frames_per_clip[modality])]
                 
                 # Ensure that indices do not exceed the number of frames
                 frames = [max(0, min(f, record.num_frames[modality] - 1)) for f in frames]
                 frame_indices.extend(frames)
+        else:
+            central_points = np.random.randint(0, (tot_frames - fixed_length), self.num_clips)
+            for point in central_points:
+                clip_frames = np.linspace(
+                    point,
+                    point + fixed_length,
+                    self.num_frames_per_clip[modality],
+                    dtype=int,
+                )
+                frame_indices.extend(clip_frames)
+            frame_indices = np.array(frame_indices)
 
         return frame_indices
 
@@ -115,30 +120,35 @@ class EpicKitchensDataset(data.Dataset, ABC):
         ##################################################################
 
         frame_indices = []
-    
-        if self.dense_sampling:
-            half_clip_frames = record.num_frames[modality] // (2 * self.num_clips)
-            total_clip_frames = self.num_frames_per_clip[modality] * self.stride
+        tot_frames = record.num_frames[modality]
+        fixed_length = tot_frames // self.num_clips
 
-            if total_clip_frames // 2 <= half_clip_frames:
-                center_points = np.linspace(half_clip_frames, 
-                                            record.num_frames[modality] - half_clip_frames, 
-                                            self.num_clips, 
-                                            dtype=int)
-            else:
-                center_points = np.linspace(total_clip_frames // 2, 
-                                            record.num_frames[modality] - total_clip_frames // 2, 
-                                            self.num_clips, 
-                                            dtype=int)
+        if self.dense_sampling[modality]:
+            half_clip_frames = record.num_frames[modality] // (2 * self.num_clips)
+            center_points = np.linspace(half_clip_frames, 
+                                        record.num_frames[modality] - half_clip_frames, 
+                                        self.num_clips, 
+                                        dtype=int)
 
             for center in center_points:
-                frames = [(center - total_clip_frames // 2 + self.stride * x) 
+                frames = [(center + self.stride * (x - self.num_frames_per_clip[modality] // 2)) 
                         for x in range(self.num_frames_per_clip[modality])]
                 
                 # Ensure that indices do not exceed the number of frames
                 frames = [max(0, min(f, record.num_frames[modality] - 1)) for f in frames]
                 frame_indices.extend(frames)
-            
+        else:
+            central_points = np.random.randint(0, (tot_frames - fixed_length), self.num_clips)
+            for point in central_points:
+                clip_frames = np.linspace(
+                    point,
+                    point + fixed_length,
+                    self.num_frames_per_clip[modality],
+                    dtype=int,
+                )
+                frame_indices.extend(clip_frames)
+            frame_indices = np.array(frame_indices)
+
         return frame_indices
 
     def __getitem__(self, index):

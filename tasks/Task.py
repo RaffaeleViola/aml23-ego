@@ -92,8 +92,8 @@ class Task(torch.nn.Module, metaclass=ABCMeta):
             path to load from
         """
         logger.info("Restoring {} for modality {} from {}".format(self.name, m, path))
-
-        checkpoint = torch.load(path, map_location=torch.device('cpu'))
+        #checkpoint = torch.load(path)
+        checkpoint = torch.load(path, map_location=torch.device('cpu')) ##MODIFICATA DA ME PER FARE ANDARE SU CPU
 
         # Restore the state of the task
         self.current_iter = checkpoint["iteration"]
