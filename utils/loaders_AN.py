@@ -15,7 +15,7 @@ from utils.logger import logger
 
 class ActionNetDataset(data.Dataset, ABC):
     def __init__(self, split, modalities, mode, dataset_conf, num_frames_per_clip, num_clips, dense_sampling,
-                 spectogram_feat, transform=None, load_feat=False, additional_info=False, **kwargs):
+                  transform=None, load_feat=False, additional_info=False, **kwargs):
 
         self.modalities = modalities  # considered modalities [RGB, EMG])
         self.mode = mode  # 'train', 'val' or 'test'
@@ -25,7 +25,7 @@ class ActionNetDataset(data.Dataset, ABC):
         self.num_clips = num_clips
         self.stride = self.dataset_conf.stride
         self.additional_info = additional_info
-        self.is_spectrogram= spectogram_feat
+
         if self.mode == "train":
             pickle_name = split + "_train.pkl"
         elif kwargs.get('save', None) is not None:
@@ -45,23 +45,12 @@ class ActionNetDataset(data.Dataset, ABC):
                 # load features for each modality
                 model_features = None
                 if m == 'RGB':
-                    sampling_mode = "dense" if self.dense_sampling['RGB'] else "uniform"
-                    model_features = pd.DataFrame(pd.read_pickle(os.path.join(str(self.dataset_conf[m].data_path),
-                                                                          self.dataset_conf[m].features_name + "_" +
-                                                                          str(self.num_frames_per_clip[m]) + "_" +
-                                                                          sampling_mode + "_" +
-                                                                          pickle_name))['features'])[
-                        ["uid", "features_" + m]]
+                    model_features = pd.DataFrame(pd.read_pickle(os.path.join(str('RGB_preprocessed'),
+                                                                            pickle_name))['features'])[["uid", "features_" + m]]
 
                 elif m == 'EMG':
-                    features_type = "_spectrogram" if spectogram_feat else ""
-                    print(features_type)
-                    model_features = pd.DataFrame(pd.read_pickle(os.path.join(str(self.dataset_conf[m].data_path),
-                                                                              self.dataset_conf[m].features_name +
-                                                                              features_type
-                                                                                + "_" +
-                                                                              pickle_name))['features'])[
-                        ["uid", "features_" + m + features_type]]
+                    model_features = pd.DataFrame(pd.read_pickle(os.path.join(str('EMG_preprocessed'),
+                                                                            "EMG_ActionNet_" + pickle_name))['features'])[["uid", "features_" + m]]
                 if self.model_features is None:
                     self.model_features = model_features
                 else:
@@ -75,15 +64,13 @@ class ActionNetDataset(data.Dataset, ABC):
 
         sample = {}
         sample_row = self.model_features[self.model_features["uid"] == int(record.uid)]
+        print(sample_row)
         assert len(sample_row) == 1
         for m in self.modalities:
             if m=='EMG':
-              features_type = "_spectrogram" if self.is_spectrogram else ""
-              sample[m] = sample_row["features_" + m + features_type].values[0]
-              if self.is_spectrogram:
-                sample[m]=np.stack(sample[m], axis=-1)
-            else:
-              sample[m]= sample_row["features_" + m ].values[0]
+                sample[m] = sample_row["features_" + m].values[0]
+            elif m=='RGB':
+                sample[m] = sample_row["features_" + m].values[0]
             
         if self.additional_info:
             return sample, record.label, record.uid
