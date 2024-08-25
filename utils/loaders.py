@@ -8,6 +8,7 @@ from PIL import Image
 import os
 import os.path
 from utils.logger import logger
+import numpy as np
 
 class EpicKitchensDataset(data.Dataset, ABC):
     def __init__(self, split, modalities, mode, dataset_conf, num_frames_per_clip, num_clips, dense_sampling,
@@ -149,7 +150,6 @@ class EpicKitchensDataset(data.Dataset, ABC):
             frame_indices = np.array(frame_indices)
 
         return frame_indices
-
 
     def __getitem__(self, index):
 

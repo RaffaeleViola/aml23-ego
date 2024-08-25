@@ -69,7 +69,8 @@ class LSTM_Classifier(nn.Module):
         out = out[:, -1, :]
 
         out = self.dropout(out)
-        out = self.fc(out)  
         out = self.relu(out)
+        out = self.fc(out)  
+        out = self.relu(out) # TODO check if is correct
         
         return out, {}
