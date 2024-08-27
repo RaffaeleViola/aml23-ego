@@ -35,22 +35,17 @@ class MLP_Classifier(nn.Module):
         self.fc1 = nn.Linear(input_size, hidden_size)
         self.dropout = nn.Dropout(dropout)
         self.relu = nn.ReLU()
-        self.fc2 = nn.Linear(hidden_size, hidden_size)
-        self.fc3 = nn.Linear(hidden_size, num_classes)
-        self.temporal_pooling = nn.AdaptiveMaxPool1d(1)  # Pooling lungo l'asse temporale
+        self.fc2 = nn.Linear(hidden_size, num_classes)
+        self.temporal_pooling = nn.AdaptiveMaxPool1d(1)  
 
-    def forward(self, x):
-
+    def forward(self, x):        
+        x = x.permute(0, 2, 1)  
+        x = self.temporal_pooling(x).squeeze(-1)  
+        
         out = self.relu(self.fc1(x))
         out = self.dropout(out)
-        
-        out = self.relu(self.fc2(out))
-        out = self.dropout(out)
 
-        out = out.permute(0, 2, 1)
-        out = self.temporal_pooling(out).squeeze(-1)  
-        
-        out = self.fc3(out)  
+        out = self.fc2(out)
         return out, {}
     
 class LSTM_Classifier(nn.Module):
@@ -71,6 +66,5 @@ class LSTM_Classifier(nn.Module):
         out = self.dropout(out)
         out = self.relu(out)
         out = self.fc(out)  
-        out = self.relu(out) # TODO check if is correct
         
         return out, {}

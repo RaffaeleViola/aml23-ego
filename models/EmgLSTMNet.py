@@ -5,7 +5,7 @@ import torch.nn.functional as F  # For the softmax function
 
 
 class EmgLSTMNet(nn.Module):
-    def __init__(self, out_classes=21):
+    def __init__(self, num_classes=20):
         super(EmgLSTMNet, self).__init__()
 
         # First LSTM layer: input size 16, output size 5
@@ -18,10 +18,10 @@ class EmgLSTMNet(nn.Module):
         self.dropout = nn.Dropout(p=0.2)
 
         # Fully connected (Dense) layer: input size 50, output size 21 classes
-        self.fc = nn.Linear(in_features=50, out_features=out_classes)
+        self.fc = nn.Linear(in_features=50, out_features=num_classes)
 
     def forward(self, x):
-        # x = x.float()
+        x = x.float()
         # x = x.squeeze(dim=1)
         logger.info(f"Forward step on tensor of size: {x.size()}")
         # First LSTM layer
@@ -42,4 +42,4 @@ class EmgLSTMNet(nn.Module):
         # Fully connected layer
         result = self.fc(last_droput_result)  # shape: (batch_size, 21)
 
-        return result  # , mid_level_features
+        return result, {}  # , mid_level_features

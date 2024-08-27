@@ -27,11 +27,14 @@ class ActionNetDataset(data.Dataset, ABC):
         self.additional_info = additional_info
 
         if self.mode == "train":
+            extention = "_train.pkl"
             pickle_name = split + "_train.pkl"
         elif kwargs.get('save', None) is not None:
+            extention = "_" + kwargs["save"] + ".pkl"
             pickle_name = split + "_" + kwargs["save"] + ".pkl"
         else:
-            pickle_name = split + "_test.pkl"
+            extention = "_test.pkl"
+            pickle_name = split + extention
 
         self.list_file = pd.read_pickle(os.path.join(self.dataset_conf.annotations_path, pickle_name))
         logger.info(f"Dataloader for {split}-{self.mode} with {len(self.list_file)} samples generated")
@@ -46,11 +49,11 @@ class ActionNetDataset(data.Dataset, ABC):
                 model_features = None
                 if m == 'RGB':
                     model_features = pd.DataFrame(pd.read_pickle(os.path.join(str('RGB_preprocessed'),
-                                                                            pickle_name))['features'])[["uid", "features_" + m]]
+                                                                            dataset_conf.name_dataset_rgb + extention))['features'])[["uid", "features_" + m]]
 
                 elif m == 'EMG':
                     model_features = pd.DataFrame(pd.read_pickle(os.path.join(str('EMG_preprocessed'),
-                                                                            "EMG_ActionNet_" + pickle_name))['features'])[["uid", "features_" + m]]
+                                                                             "EMG_" + pickle_name))['features'])[["uid", "features_" + m]]
                 if self.model_features is None:
                     self.model_features = model_features
                 else:
@@ -64,7 +67,6 @@ class ActionNetDataset(data.Dataset, ABC):
 
         sample = {}
         sample_row = self.model_features[self.model_features["uid"] == int(record.uid)]
-        print(sample_row)
         assert len(sample_row) == 1
         for m in self.modalities:
             if m=='EMG':

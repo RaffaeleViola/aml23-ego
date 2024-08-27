@@ -37,7 +37,7 @@ class RelationModule(torch.nn.Module):
 class RelationModuleMultiScale(torch.nn.Module):
     # Temporal Relation module in multiply scale, suming over [2-frame relation, 3-frame relation,
     # ..., n-frame relation]
-    def __init__(self, img_feature_dim, num_frames, num_class):
+    def __init__(self, img_feature_dim, num_frames, num_classes):
         super(RelationModuleMultiScale, self).__init__()
         self.subsample_num = 3 # how many relations selected to sum up
         self.img_feature_dim = img_feature_dim
@@ -50,7 +50,7 @@ class RelationModuleMultiScale(torch.nn.Module):
             self.relations_scales.append(relations_scale)
             self.subsample_scales.append(min(self.subsample_num, len(relations_scale))) # how many samples of relation to select in each forward pass
 
-        self.num_class = num_class
+        self.num_class = num_classes
         self.num_frames = num_frames
         num_bottleneck = 256
         self.fc_fusion_scales = nn.ModuleList() # high-tech modulelist
@@ -90,7 +90,7 @@ class RelationModuleMultiScale(torch.nn.Module):
 
 class MultiScaleTRN(torch.nn.Module):
     # relation module in multi-scale with a classifier at the end
-    def __init__(self, img_feature_dim, num_frames, num_class):
+    def __init__(self, img_feature_dim=1024, num_frames=5, num_classes=20):
         super(MultiScaleTRN, self).__init__()
         self.subsample_num = 3 # how many relations selected to sum up
         self.img_feature_dim = img_feature_dim
@@ -103,7 +103,7 @@ class MultiScaleTRN(torch.nn.Module):
             self.relations_scales.append(relations_scale)
             self.subsample_scales.append(min(self.subsample_num, len(relations_scale))) # how many samples of relation to select in each forward pass
 
-        self.num_class = num_class
+        self.num_class = num_classes
         self.num_frames = num_frames
         num_bottleneck = 256
         self.fc_fusion_scales = nn.ModuleList() # high-tech modulelist
@@ -127,9 +127,9 @@ class MultiScaleTRN(torch.nn.Module):
         print('Multi-Scale Temporal Relation with classifier in use')
         print(['%d-frame relation' % i for i in self.scales])
 
-    def forward(self, input):
+    def forward(self, x):
         # the first one is the largest scale
-        act_all = input[:, self.relations_scales[0][0] , :]
+        act_all = x[:, self.relations_scales[0][0] , :]
         act_all = act_all.view(act_all.size(0), self.scales[0] * self.img_feature_dim)
         act_all = self.fc_fusion_scales[0](act_all)
         act_all = self.classifier_scales[0](act_all)
@@ -138,12 +138,12 @@ class MultiScaleTRN(torch.nn.Module):
             # iterate over the scales
             idx_relations_randomsample = np.random.choice(len(self.relations_scales[scaleID]), self.subsample_scales[scaleID], replace=False)
             for idx in idx_relations_randomsample:
-                act_relation = input[:, self.relations_scales[scaleID][idx], :]
+                act_relation = x[:, self.relations_scales[scaleID][idx], :]
                 act_relation = act_relation.view(act_relation.size(0), self.scales[scaleID] * self.img_feature_dim)
                 act_relation = self.fc_fusion_scales[scaleID](act_relation)
                 act_relation = self.classifier_scales[scaleID](act_relation)
                 act_all += act_relation
-        return act_all
+        return act_all, {}
 
     def return_relationset(self, num_frames, num_frames_relation):
         import itertools
@@ -151,12 +151,3 @@ class MultiScaleTRN(torch.nn.Module):
 
 
 
-# if __name__ == "__main__":
-#     batch_size = 10
-#     num_frames = 5
-#     num_class = 174
-#     img_feature_dim = 512
-#     input_var = Variable(torch.randn(batch_size, num_frames, img_feature_dim))
-#     model = RelationModuleMultiScale(img_feature_dim, num_frames, num_class)
-#     output = model(input_var)
-#     print(output)
