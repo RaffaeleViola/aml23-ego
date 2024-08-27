@@ -132,6 +132,7 @@ class MultiScaleTRN(torch.nn.Module):
         act_all = x[:, self.relations_scales[0][0] , :]
         act_all = act_all.view(act_all.size(0), self.scales[0] * self.img_feature_dim)
         act_all = self.fc_fusion_scales[0](act_all)
+        extracted_feats = act_all.clone()
         act_all = self.classifier_scales[0](act_all)
 
         for scaleID in range(1, len(self.scales)):
@@ -141,9 +142,10 @@ class MultiScaleTRN(torch.nn.Module):
                 act_relation = x[:, self.relations_scales[scaleID][idx], :]
                 act_relation = act_relation.view(act_relation.size(0), self.scales[scaleID] * self.img_feature_dim)
                 act_relation = self.fc_fusion_scales[scaleID](act_relation)
+                extracted_feats += act_relation
                 act_relation = self.classifier_scales[scaleID](act_relation)
                 act_all += act_relation
-        return act_all, {}
+        return act_all, extracted_feats
 
     def return_relationset(self, num_frames, num_frames_relation):
         import itertools
