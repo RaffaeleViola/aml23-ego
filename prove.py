@@ -1,7 +1,7 @@
 import pandas as pd
 from scipy.signal import butter, lfilter 
 import numpy as np
-
+'''
 def load_data(filename):
     emg_data = pd.read_pickle(f"/Users/federicobuccellato/Desktop/aml23-ego/EMG_data/{filename}")
     return emg_data
@@ -32,7 +32,7 @@ def lowpass_filter(data, cutoff, Fs, order=5):
   y = lfilter(b, a, data.T).T
   return y
 
-'''splits = ['train', 'test']
+splits = ['train', 'test']
 resampled_Fs = 10  # Define rate for all sensors to interpolate
 segment_duration_s = 10
 save_dir = '//Users/federicobuccellato/Desktop/aml23-ego/EMG_preprocessed'
@@ -119,7 +119,7 @@ for key in rgb_annotations.keys():
     print(f"Chiave: {key}")
 
 print(rgb_annotations['features'][0]['features_RGB'])'''
-
+'''
 center_points = np.linspace(5,95, 10,  dtype=int)
 frame_indices = []
 print(center_points)
@@ -131,3 +131,17 @@ for center in center_points:
     frame_indices.extend(frames)
 
 print(frame_indices)
+'''
+feat = pd.read_pickle(r"C:\\Users\\Nunzi\\OneDrive\\Desktop\\aml\\aml23-ego\\saved_features\\feat_16_EK_D1_test_dense.pkl")
+#print(type(feat["features"]))
+dataset = pd.read_pickle(r"C:\\Users\\Nunzi\\OneDrive\\Desktop\\aml\\aml23-ego\\train_val\\D1_test.pkl")
+print(dataset.keys())
+# print(f"video_id: {dataset["video_id"][1]}")
+# print(f"uid: {dataset["uid"][1]}")
+# print(f"start_frame: {dataset["start_frame"][1]}")
+# print(f"stop_frame: {dataset["stop_frame"][1]}")
+# print(f"narration: {dataset["narration"][1]}")
+# print(f"verb: {dataset["verb"][1]}")
+# print(f"verb_class: {dataset["verb_class"][1]}")
+# print(f"uid: {feat["features"][1]["uid"]}")
+# print(f"video_name: {feat["features"][1]["video_name"]}")

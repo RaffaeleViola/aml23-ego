@@ -37,7 +37,7 @@ if __name__ == "__main__":
                         "name": f"feat_{i}_{j}_{k}",
                         "config": "configs/I3D_save_feat.yaml",
                         "shift": "D1-D1",
-                        "data_path": "EK_Data/frames",
+                        "data_path": "ek_data/frames",
                         "split": j,
                         "num_frames_per_clip": i,
                         "sampling": k,
