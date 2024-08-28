@@ -27,7 +27,7 @@ python3 train_classifier_AN.py name=train_rgb_an\
 ```bash
 python3 train_classifier_AN.py name=train_multimodal _an\
   config=configs/training_multimodal_an.yaml \
-  models.RGB.model=Lstm_classifier \
+  models.RGB.model=LSTM_Classifier \
   models.EMG.model=EmgLSTMNet \
   dataset.name_dataset_rgb=S04_10_dense\
 ```
