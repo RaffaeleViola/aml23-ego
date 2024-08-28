@@ -4,7 +4,7 @@ import torch
 
 def get_domains_and_labels(args):
     num_verbs = 8
-    domains = {'D1': 8, 'D2': 1, 'D3': 22, 'S04': 20, 'ActionNet': 20}
+    domains = {'D1': 8, 'D2': 1, 'D3': 22, 'S04': 20, 'ActionNet': 20, 'spectrograms': 20}
     source_domain = domains[args.dataset.shift.split("-")[0]]
     target_domain = domains[args.dataset.shift.split("-")[1]]
     valid_labels = [i for i in range(num_verbs)]
@@ -14,15 +14,6 @@ def get_domains_and_labels(args):
 
 
     print(num_class, " ", source_domain)
-    return num_class, valid_labels, source_domain, target_domain
-
-def get_domains_and_labels_AN(args):
-    num_verbs = 20
-    domains = {'S04': 20, 'ActionNet': 20}
-    source_domain = domains[args.dataset.shift.split("-")[0]]
-    target_domain = domains[args.dataset.shift.split("-")[1]]
-    valid_labels = [i for i in range(num_verbs)]
-    num_class = num_verbs
     return num_class, valid_labels, source_domain, target_domain
 
 class Accuracy(object):

@@ -23,7 +23,7 @@ python3 train_classifier_AN.py name=train_rgb_an\
   dataset.name_dataset_rgb=S04_10_dense\
 ```
 
-## 2. Addestramento su Dati Multimodal
+## 3. Addestramento su Dati Multimodal
 ```bash
 python3 train_classifier_AN.py name=train_multimodal _an\
   config=configs/training_multimodal_an.yaml \
@@ -37,4 +37,12 @@ python3 train_classifier_AN.py name=train_multimodal _an\
   models.RGB.model=MultiScaleTRN \
   models.EMG.model=EmgLSTMNet \
   dataset.name_dataset_rgb=S04_10_dense\
+```
+
+## 4. Addestramento su Dati spectrogram
+```bash
+python3 train_classifier_AN.py name=train_spectrogram_an \
+  config=configs/training_spectrogram_an.yaml \
+  dataset.EMG.features_name=EMG_preprocessed \
+  models.EMG.model=? \
 ```

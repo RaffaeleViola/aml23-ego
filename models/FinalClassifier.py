@@ -13,20 +13,6 @@ class Classifier(nn.Module):
     def forward(self, x):
         return self.classifier(x), {}
     
-class I3D_Classifier(nn.Module):
-    def __init__(self, num_classes=8, dropout=0.5):
-        super().__init__()
-        self.dropout = nn.Dropout(dropout)
-        self.logits = InceptionI3d.Unit3D(
-            in_channels=1024,
-            output_channels=num_classes,
-        )
-
-    def forward(self, x):
-        x = self.dropout(x).unsqueeze(-1).unsqueeze(-1).unsqueeze(-1)
-        logits = self.logits(x).squeeze(3).squeeze(3).squeeze(2)
-        return logits, {}
-
 
 class MLP_Classifier(nn.Module):
     def __init__(self, input_size=1024, hidden_size=512, num_classes=8, dropout=0.5):

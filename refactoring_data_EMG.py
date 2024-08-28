@@ -7,7 +7,7 @@ def filter_refactor_emg_data(input_path, output_path, filter_value):
 
     transformed_data = {'features': []}
 
-    for i in range(len(data['uid'])):
+    for i in range(len(data)):
         #if data['file'][i] == filter_value: #da inserire quando si vuole prendere il dataset solo per S04
             record = {
                 'uid': data['uid'][i],
@@ -27,7 +27,7 @@ def create_labels_data(input_path, output_path):
 
     records = []
 
-    for i in range(len(data['uid'])):
+    for i in range(len(data)):
         record = {
             'uid': data['uid'][i],
             'description': data['description'][i],
