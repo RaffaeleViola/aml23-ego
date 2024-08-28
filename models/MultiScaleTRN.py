@@ -145,11 +145,8 @@ class MultiScaleTRN(torch.nn.Module):
                 extracted_feats += act_relation
                 act_relation = self.classifier_scales[scaleID](act_relation)
                 act_all += act_relation
-        return act_all, extracted_feats
+        return act_all, {'features': extracted_feats}
 
     def return_relationset(self, num_frames, num_frames_relation):
         import itertools
         return list(itertools.combinations([i for i in range(num_frames)], num_frames_relation))
-
-
-
