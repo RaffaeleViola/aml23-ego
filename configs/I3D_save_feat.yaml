@@ -4,9 +4,9 @@ split: test
 resume_from: ./saved_models/I3D_SourceOnlyD1
 
 save:
-  num_clips: 5
+  num_clips: 25
   dense_sampling:
-    RGB: True
+    RGB: False
   num_frames_per_clip:
     RGB: 16
 

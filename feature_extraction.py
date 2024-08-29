@@ -2,7 +2,7 @@ import subprocess
 from multiprocessing import Pool, Process
 from utils.logger import logger
 
-FRAMES = [5]
+FRAMES = [25]
 SPLITS = ["test"]
 SAMPLING = [False]
 
