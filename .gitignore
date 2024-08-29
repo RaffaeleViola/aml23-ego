@@ -8,6 +8,8 @@ colab_runner.ipynb
 saved_features
 saved_models
 TEST_RESULTS
+ActionSense_RGB
+ActionSense_EMG
 models/__pycache__
 utils/__pycache__
 tasks/__pycache__
