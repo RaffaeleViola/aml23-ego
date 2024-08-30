@@ -1,3 +1,9 @@
+ek_data
+Experiment_logs
+saved_features
+saved_models
+TEST_RESULTS
+env.yml
 EK_Data
 pretrained_i3d
 Experiment_logs
@@ -13,3 +19,5 @@ ActionSense_EMG
 models/__pycache__
 utils/__pycache__
 tasks/__pycache__
+action-net
+.gitignore

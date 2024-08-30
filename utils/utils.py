@@ -4,13 +4,17 @@ import torch
 
 def get_domains_and_labels(args):
     num_verbs = 8
-    domains = {'D1': 8, 'D2': 1, 'D3': 22}
+    domains = {'D1': 8, 'D2': 1, 'D3': 22, 'S04': 20, 'ActionNet': 20, 'spectrograms': 20}
     source_domain = domains[args.dataset.shift.split("-")[0]]
     target_domain = domains[args.dataset.shift.split("-")[1]]
     valid_labels = [i for i in range(num_verbs)]
     num_class = num_verbs
-    return num_class, valid_labels, source_domain, target_domain
+    if source_domain == 20 or source_domain == 20:
+        num_class = 20
 
+
+    print(num_class, " ", source_domain)
+    return num_class, valid_labels, source_domain, target_domain
 
 class Accuracy(object):
     """Computes and stores the average and current value of different top-k accuracies from the outputs and labels"""

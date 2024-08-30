@@ -97,7 +97,6 @@ class Task(torch.nn.Module, metaclass=ABCMeta):
         print('cuda' if torch.cuda.is_available() else 'cpu')
         checkpoint = torch.load(path, map_location=device)
 
-
         # Restore the state of the task
         self.current_iter = checkpoint["iteration"]
         self.best_iter = checkpoint["best_iter"]
@@ -190,6 +189,10 @@ class Task(torch.nn.Module, metaclass=ABCMeta):
 
             model_path = os.path.join(last_models_dir, model)
             self.__restore_checkpoint(m, model_path)
+
+    def load_last_model_an(self, path: str, modality: str):
+
+        self.__restore_checkpoint(modality, path)
 
     def save_model(self, current_iter: int, last_iter_acc: float, prefix: Optional[str] = None):
         """Save the model.

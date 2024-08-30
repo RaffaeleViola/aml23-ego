@@ -169,3 +169,58 @@ class ActionRecognition(tasks.Task, ABC):
             whether the computational graph should be retained, by default False
         """
         self.loss.val.backward(retain_graph=retain_graph)
+
+
+class WeightedActionRecognition(ActionRecognition):
+    def __init__(self, name: str, task_models: Dict[str, torch.nn.Module], batch_size: int,
+                 total_batch: int, models_dir: str, num_classes: int,
+                 num_clips: int, model_args: Dict[str, float], weights: Dict[str, float], args, **kwargs) -> None:
+        """Create an instance of the action recognition model.
+
+        Parameters
+        ----------
+        name : str
+            name of the task e.g. action_classifier, domain_classifier...
+        task_models : Dict[str, torch.nn.Module]
+            torch models, one for each different modality adopted by the task
+        batch_size : int
+            actual batch size in the forward
+        total_batch : int
+            batch size simulated via gradient accumulation
+        models_dir : str
+            directory where the models are stored when saved
+        num_classes : int
+            number of labels in the classification task
+        num_clips : int
+            number of clips
+        model_args : Dict[str, float]
+            model-specific arguments
+        weights: Dict[str, float]
+            list of weight for each modality to apply in late fusion
+        """
+        super().__init__(name, task_models, batch_size, total_batch, models_dir, num_classes, num_clips, model_args,
+                         args, **kwargs)
+        self.weights = weights
+
+    def compute_loss(self, logits: Dict[str, torch.Tensor], label: torch.Tensor, loss_weight: float=1.0):
+        """Fuse the logits from different modalities and compute the classification loss.
+
+        Parameters
+        ----------
+        logits : Dict[str, torch.Tensor]
+            logits of the different modalities
+        label : torch.Tensor
+            ground truth
+        loss_weight : float, optional
+            weight of the classification loss, by default 1.0
+        """
+        # apply weights
+        fused_logits = {}
+        for key in logits.keys():
+            fused_logits[key] = self.weights[key] * logits[key]
+        fused_logits = reduce(lambda x, y: x + y, fused_logits.values())
+        loss = self.criterion(fused_logits, label) / self.num_clips
+        # Update the loss value, weighting it by the ratio of the batch size to the total
+        # batch size (for gradient accumulation)
+        self.loss.update(torch.mean(loss_weight * loss) / (self.total_batch / self.batch_size), self.batch_size)
+

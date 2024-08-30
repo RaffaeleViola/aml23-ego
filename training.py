@@ -6,7 +6,7 @@ import torch
 
 FRAMES = [5]
 ACTIONS = ["train"]
-SAMPLING = [False]
+SAMPLING = [True]
 CONFIG = "configs/training.yaml"
 MODELS = ["MLP_Classifier"]  # ["I3D_Classifier", "LSTM_Classifier", "MLP_Classifier"]
 #COMPLETED= {"LSTM_Classifier_5_True"}

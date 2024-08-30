@@ -13,20 +13,6 @@ class Classifier(nn.Module):
     def forward(self, x):
         return self.classifier(x), {}
     
-class I3D_Classifier(nn.Module):
-    def __init__(self, num_classes=8, dropout=0.5):
-        super().__init__()
-        self.dropout = nn.Dropout(dropout)
-        self.logits = InceptionI3d.Unit3D(
-            in_channels=1024,
-            output_channels=num_classes,
-        )
-
-    def forward(self, x):
-        x = self.dropout(x).unsqueeze(-1).unsqueeze(-1).unsqueeze(-1)
-        logits = self.logits(x).squeeze(3).squeeze(3).squeeze(2)
-        return logits, {}
-
 
 class MLP_Classifier(nn.Module):
     def __init__(self, input_size=1024, hidden_size=512, num_classes=8, dropout=0.5):
@@ -35,22 +21,17 @@ class MLP_Classifier(nn.Module):
         self.fc1 = nn.Linear(input_size, hidden_size)
         self.dropout = nn.Dropout(dropout)
         self.relu = nn.ReLU()
-        self.fc2 = nn.Linear(hidden_size, hidden_size)
-        self.fc3 = nn.Linear(hidden_size, num_classes)
-        self.temporal_pooling = nn.AdaptiveMaxPool1d(1)  # Pooling lungo l'asse temporale
+        self.fc2 = nn.Linear(hidden_size, num_classes)
+        self.temporal_pooling = nn.AdaptiveMaxPool1d(1)  
 
-    def forward(self, x):
-
+    def forward(self, x):        
+        x = x.permute(0, 2, 1)  
+        x = self.temporal_pooling(x).squeeze(-1)  
+        
         out = self.relu(self.fc1(x))
         out = self.dropout(out)
-        
-        out = self.relu(self.fc2(out))
-        out = self.dropout(out)
 
-        out = out.permute(0, 2, 1)
-        out = self.temporal_pooling(out).squeeze(-1)  
-        
-        out = self.fc3(out)  
+        out = self.fc2(out)
         return out, {}
     
 class LSTM_Classifier(nn.Module):
@@ -69,7 +50,7 @@ class LSTM_Classifier(nn.Module):
         out = out[:, -1, :]
 
         out = self.dropout(out)
-        out = self.fc(out)  
         out = self.relu(out)
+        out = self.fc(out)  
         
         return out, {}
