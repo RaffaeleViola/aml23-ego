@@ -9,7 +9,7 @@ def get_domains_and_labels(args):
     target_domain = domains[args.dataset.shift.split("-")[1]]
     valid_labels = [i for i in range(num_verbs)]
     num_class = num_verbs
-    if source_domain == 20 or source_domain == 20:
+    if source_domain == 20 or target_domain == 20:
         num_class = 20
 
 
