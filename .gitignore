@@ -23,4 +23,5 @@ tasks/__pycache__
 action-net
 utils/__pycache__/logger.cpython-312.pyc
 utils/__pycache__/__init__.cpython-312.pyc
+an_data
 .gitignore
