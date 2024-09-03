@@ -42,4 +42,4 @@ class EmgLSTMNet(nn.Module):
         # Fully connected layer
         result = self.fc(last_droput_result)  # shape: (batch_size, 21)
 
-        return result, {}  # , mid_level_features
+        return result, last_droput_result  # , mid_level_features

@@ -6,9 +6,9 @@ import torch
 
 FRAMES = [5]
 ACTIONS = ["train"]
-SAMPLING = [True]
+SAMPLING = [False]
 CONFIG = "configs/training.yaml"
-MODELS = ["MLP_Classifier"]  # ["I3D_Classifier", "LSTM_Classifier", "MLP_Classifier"]
+MODELS = ["LSTM_Classifier"]  # ["I3D_Classifier", "LSTM_Classifier", "MLP_Classifier"]
 #COMPLETED= {"LSTM_Classifier_5_True"}
 COMPLETED= {""}
 
@@ -35,7 +35,7 @@ def run_command(args):
 
 
 # Maximum number of parallel executions
-max_processes = 2  # Adjust as needed
+max_processes = 4  # Adjust as needed
 
 
 if __name__ == "__main__":

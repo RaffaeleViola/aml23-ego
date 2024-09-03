@@ -2,7 +2,7 @@ import subprocess
 from multiprocessing import Pool, Process
 from utils.logger import logger
 
-FRAMES = [5]
+FRAMES = [5, 10, 25]
 SPLITS = ["test"]
 SAMPLING = [False]
 
@@ -23,7 +23,7 @@ def run_command(args):
 
 
 # Maximum number of parallel executions
-max_processes = 2  # Adjust as needed
+max_processes = 4  # Adjust as needed
 
 
 if __name__ == "__main__":

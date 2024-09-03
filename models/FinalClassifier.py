@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from models.I3D import InceptionI3d
-
+from utils.logger import logger
 
 class Classifier(nn.Module):
     def __init__(self, num_classes):
@@ -52,13 +52,13 @@ class LSTM_Classifier(nn.Module):
     def __init__(self, input_size=1024, hidden_size=512, num_classes=8, dropout=0.5):
         super().__init__()
 
-        self.lstm = nn.LSTM(input_size, hidden_size, batch_first=True)
+        self.lstm = nn.LSTM(input_size, hidden_size, batch_first=True, num_layers=2)
         self.dropout = nn.Dropout(dropout)
         self.relu = nn.ReLU()
         self.fc = nn.Linear(hidden_size, num_classes)
         self.temporal_pooling = nn.AdaptiveMaxPool1d(1)
 
-    def forward(self, x):        
+    def forward(self, x):
         out, _ = self.lstm(x)  
         
         out = out[:, -1, :]
