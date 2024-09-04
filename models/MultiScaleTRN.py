@@ -65,8 +65,6 @@ class RelationModuleMultiScale(torch.nn.Module):
 
             self.fc_fusion_scales += [fc_fusion]
 
-        print('Multi-Scale Temporal Relation Network Module in use', ['%d-frame relation' % i for i in self.scales])
-
     def forward(self, input):
         # the first one is the largest scale
         act_all = input[:, self.relations_scales[0][0] , :]
@@ -123,9 +121,7 @@ class MultiScaleTRN(torch.nn.Module):
             classifier = nn.Linear(num_bottleneck, self.num_class)
             self.fc_fusion_scales += [fc_fusion]
             self.classifier_scales += [classifier]
-        # maybe we put another fc layer after the summed up results???
-        print('Multi-Scale Temporal Relation with classifier in use')
-        print(['%d-frame relation' % i for i in self.scales])
+
 
     def forward(self, x):
         # the first one is the largest scale
