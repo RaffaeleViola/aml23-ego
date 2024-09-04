@@ -23,7 +23,7 @@ python3 train_classifier_AN.py name=train_rgb_an\
   dataset.name_dataset_rgb=S04_10_dense\
 ```
 
-## 3. Addestramento su Dati Multimodal
+## 3. Addestramento su Dati Multimodal Late Fusion
 ```bash
 python3 train_classifier_AN.py name=train_multimodal _an\
   config=configs/training_multimodal_an.yaml \
@@ -45,4 +45,10 @@ python3 train_classifier_AN.py name=train_spectrogram_an \
   config=configs/training_spectrogram_an.yaml \
   dataset.EMG.features_name=EMG_preprocessed \
   models.EMG.model=? \
+```
+
+## 3. Addestramento su Dati Multimodal Middle Fusion
+```bash
+ python3 train_mid_classifier_AN.py name=train_mid_multimodal_an\  
+  config=configs/training_mid_an.yaml\
 ```
