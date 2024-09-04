@@ -30,13 +30,13 @@ test:
     RGB: 5
 
 dataset:
-  #annotations_path: labels_AN/labels_full_dataset # path for the annotations data
-  #shift: ActionNet-ActionNet # shifts of the dataset
-  #name_dataset_emg: ActionNet_EMG
+  annotations_path: labels_AN/labels_full_dataset # path for the annotations data
+  shift: ActionNet-ActionNet # shifts of the dataset
+  name_dataset_emg: ActionNet_EMG
   #QUESTI PER IL MULTIMODAL
-  annotations_path: labels_AN/labels_S04 # path for the annotations data
-  shift: S04-S04 # shifts of the dataset
-  name_dataset: S04
+  # annotations_path: labels_AN/labels_S04 # path for the annotations data
+  # shift: S04-S04 # shifts of the dataset
+  # name_dataset: S04
   workers: 4 # number of workers for the dataloader
   stride: 2 # stride in case of dense sampling
   resolution: 224 # input resolution to the model
@@ -51,13 +51,14 @@ dataset:
 models:
   EMG:
     model: ???
-    dropout: 0.5
+    dropout: 0.2
     normalize: False
     resolution: 224
     kwargs: { }
     lr_steps: 3000
-    lr: 0.01
+    lr: 0.2
     sgd_momentum: 0.9
-    weight_decay: 1e-7
+    weight_decay: 1e-4
     hidden_size: 512
+
 

@@ -5,3 +5,5 @@ from models.FinalClassifier import MLP_Classifier
 from models.FinalClassifier import LSTM_Classifier
 from models.EmgLSTMNet import EmgLSTMNet
 from models.MultiScaleTRN import MultiScaleTRN
+from models.FusionClassifier import FusionClassifier
+from models.CNN_2D import SqueezeNet
